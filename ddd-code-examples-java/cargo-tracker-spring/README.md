@@ -5,6 +5,53 @@
 Cargo Tracker的微服务架构如下：
 ![cargo-tracker-ms](../../ddd-assets/img/cargo-tracker-ms.jpeg)
 
+上下文列表：
+- Booking上下文
+- Tracking上下文
+- Routing上下文
+- Handling上下文
+
+
+### Booking上下文
+Booking上下文：
+- 提供的接口包括：
+    - Book Cargo (Command)
+    - Assign Route to Cargo (Command)
+    - Cargo Details (Query)
+- 调用其他上下文提供的接口：
+    - Routing上下文提供的Get ltinerary for Route (Query)
+- 发布的事件包括：
+    - Cargo Booked
+    - Cargo Routed
+- 订阅的事件包括：
+    - Cargo Handled
+
+### Tracking上下文
+Tracking上下文：
+- 提供的接口包括：
+    - Assign Tracker to Cargo (Command)
+    - Track Cargo (Query)
+- 订阅的事件包括：
+    - Cargo Routed
+    - Cargo Handled
+
+### Routing上下文
+Routing上下文：
+- 提供的接口包括：
+    - Maintain Voyages (Command)
+    - Get ltinerary for Route (Query)
+- 订阅的事件包括：
+    - Cargo Routed
+    - Cargo Handled
+
+### Handling上下文
+Handling上下文：
+- 提供的接口包括：
+    - Register Handling Activity (Command)
+    - Handling History Details (Query)
+- 发布的事件包括：
+    - Cargo Handled
+
 ## 微服务列表
 
 微服务包括：
@@ -36,7 +83,7 @@ Booking上下文的包结构如下：
 
 ### 接口
 
-Booking上下文的的REST API包括：
+Booking上下文的提供的REST API包括：
 - 命令接口（改变状态的请求）
     - Book Cargo Command
     - Assign Route to Cargo Command
@@ -44,16 +91,20 @@ Booking上下文的的REST API包括：
     - Retrieve Cargo Booking Details
     - List all Cargos
 
-这些REST API定义在`rest/CargoBookingController.java`类中。该Controller类中使用了`CargoBookingCommandService`类和`CargoBookingQueryService`类，分别对应命令操作和查询操作。
+这些REST API定义在`rest/CargoBookingController.java`类中。
+该Controller类中使用了`CargoBookingCommandService`类和`CargoBookingQueryService`类，分别对应命令操作和查询操作。
 
 Booking上下文接口的包结构如下：
 ```bash
 interfaces
 └── rest # REST API
-    ├── CargoBookingController.java # Spring Boot RestController
+    ├── CargoBookingController.java # 定义REST API的Spring Boot RestController
     ├── dto
-    │   └── BookCargoResource.java
+    │   └── BookCargoResource.java # 
     └── transform
         └── BookCargoCommandDTOAssembler.java
 ```
+
+## References
+- https://github.com/Apress/practical-ddd-in-enterprise-java/tree/master/Chapter5
 
