@@ -5,7 +5,7 @@
 ### DDD分层架构
 
 传统的DDD分层架构如下：
-![ddd-layered](./ddd-assets/img/ddd-layered.jpeg)
+![ddd-layered](../ddd-assets/img/ddd-layered.jpeg)
 
 分层包括：
 - UI Layer
@@ -16,7 +16,7 @@
 ### 六边形架构
 
 六边形架构（也称端口/适配器架构）如下：
-![ddd-hexagonal](./ddd-assets/img/ddd-hexagonal.jpeg)
+![ddd-hexagonal](../ddd-assets/img/ddd-hexagonal.jpeg)
 
 分层包括：
 - Inbound Adaptor
