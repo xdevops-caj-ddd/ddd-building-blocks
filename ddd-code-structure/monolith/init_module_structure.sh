@@ -15,8 +15,8 @@ mkdir -p module/application/transform
 
 # Domain models / Domain layer
 mkdir -p module/domain/aggregates
-mkdir -p module/domain/model/entities
-mkdir -p module/domain/model/valueobjects
+mkdir -p module/domain/entities
+mkdir -p module/domain/valueobjects
 
 # Infrastructure / Outbound adaptors
 mkdir -p module/infrastructure/events
