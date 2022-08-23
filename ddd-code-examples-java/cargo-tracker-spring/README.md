@@ -3,7 +3,7 @@
 ## 微服务架构
 
 Cargo Tracker的微服务架构如下：
-![cargo-tracker-ms](../../../ddd-assets/img/cargo-tracker-ms.jpeg)
+![cargo-tracker-ms](../../ddd-assets/img/cargo-tracker-ms.jpeg)
 
 ## 微服务列表
 
