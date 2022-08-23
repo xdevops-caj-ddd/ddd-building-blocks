@@ -5,7 +5,7 @@
 Cargo Tracker的微服务架构如下：
 ![cargo-tracker-ms](../../ddd-assets/img/cargo-tracker-ms.jpeg)
 
-上下文列表：
+上下文包括：
 - Booking上下文
 - Tracking上下文
 - Routing上下文
