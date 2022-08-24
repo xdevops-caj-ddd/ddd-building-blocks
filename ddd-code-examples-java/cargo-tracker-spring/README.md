@@ -68,9 +68,7 @@ Handling上下文：
 分布式事务处理：
 Implement **Distributed Transactions using event choreography** with a custom implementation utilizing Spring Boot and Spring Cloud Stream
 
-## 代码结构
-
-### 上下文包结构
+## 上下文包结构
 
 以Booking上下文为例，包结构如下：
 ```bash
@@ -135,7 +133,7 @@ interfaces
     └── CargoRoutedEventHandler.java
 ```
 
-## 应用层
+### 应用层
 
 应用层的职责包括：
 - 调度命令（改变状态）应用服务
@@ -157,7 +155,7 @@ application # 应用层 / 应用服务
         └── CargoBookingQueryService.java
 ```
 
-## 领域层
+### 领域层
 
 领域层主要包括：
 - 领域模型
@@ -197,7 +195,7 @@ domain # 领域层
         └── Voyage.java
 ```
 
-## 基础设施层
+### 基础设施层
 
 基础设施层的主要职责：
 - 改变状态或获取状态：写入数据到数据库，或从数据库中读取数据
