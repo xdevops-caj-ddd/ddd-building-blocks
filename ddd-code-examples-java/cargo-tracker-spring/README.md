@@ -72,7 +72,7 @@ Implement **Distributed Transactions using event choreography** with a custom im
 
 ### 上下文包结构
 
-Booking上下文的包结构如下：
+以Booking上下文为例，包结构如下：
 ```bash
 ├── BookingmsApplication.java # Spring Boot应用程序入口
 ├── application # 应用层
@@ -83,7 +83,9 @@ Booking上下文的包结构如下：
 
 ### 接口
 
-Booking上下文的提供的REST API包括：
+
+#### REST API
+以Booking上下文为例，该上下文提供的REST API包括：
 - 命令接口（改变状态的请求）
     - Book Cargo Command
     - Assign Route to Cargo Command
@@ -91,7 +93,7 @@ Booking上下文的提供的REST API包括：
     - Retrieve Cargo Booking Details
     - List all Cargos
 
-这些REST API定义在`rest/CargoBookingController.java`类中。
+这些REST API定义在`interfaces/rest/CargoBookingController.java`类中。
 该Controller类中使用了`CargoBookingCommandService`类和`CargoBookingQueryService`类，分别对应命令操作和查询操作。
 
 Booking上下文接口的包结构如下：
@@ -104,6 +106,26 @@ interfaces
     └── transform
         └── BookCargoCommandDTOAssembler.java
 ```
+
+#### 接口数据转换
+
+参见上面Booking上下文接口的包结构。
+
+在`interfaces/dto`包下，定义REST API的API Resources （就是一个普通的Data Transfer Object）。
+
+在`interfaces/transform`包下，定义数据转换类，将REST API的API Resource或Event Data转换成Command/Query Service所需要的模型。
+
+> 数据转换也可以使用专门的数据转换工具框架，而不需要每个每个类都写一个数据转换类。
+
+
+
+
+#### 事件处理
+
+另外`interfaces/events`下的EventHandler类用来订阅和处理相应的Domain Event。
+
+以Tracking上下文为例，Tracking上下文订阅了`CargoRouted`的Domain Event，因此`interfaces/events/CargoRoutedEventHandler.java`类用来订阅和处理`CargoRoutedEvent`。
+
 
 ## References
 - https://github.com/Apress/practical-ddd-in-enterprise-java/tree/master/Chapter5
