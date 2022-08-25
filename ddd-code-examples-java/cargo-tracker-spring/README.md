@@ -177,7 +177,7 @@ domain # 领域层
     ├── aggregates # 聚合
     │   ├── BookingId.java # 聚合标识符
     │   └── Cargo.java # 聚合根（Aggregate Root / Root Entity）
-    ├── commands # 命令
+    ├── commands # 领域模型操作-命令
     │   ├── BookCargoCommand.java
     │   └── RouteCargoCommand.java
     ├── entities # 实体
@@ -228,10 +228,71 @@ infrastructure # 基础设施层 / 出站适配器
   # REST API -> 查询应用服务 -> 数据库存储库
   CargoBookingController -> CargoBookingQueryService -> CargoRepository
   ```
+- 事件订阅与处理流程：
+  TBC
 - 事件发布流程：
   ```bash
-  CargoBookingController -> CargoBookingCommandService -> ...
+  CargoBookingController -> CargoBookingCommandService -> TBC
   ```
+
+## 领域模型实现
+
+领域模型包括：
+- 聚合
+- 实体
+- 值对象
+
+### 聚合实现
+
+聚合包括：
+- 聚合根
+- 聚合标识符
+
+
+#### 聚合根
+
+以Booking上下文的Cargo聚合根类为例。
+
+```java
+package com.practicalddd.cargotracker.bookingms.domain.model.aggregates;
+import javax.persistence.*;
+@Entity //JPA Entity Marker
+public class Cargo {
+
+}
+```
+
+> 示例代码中将Cargo类和直接和JPA Entity注解绑定起来。
+> 关于“将领域对象类和JPA Entity注解绑定，还是应该分离”存在争议，参见：https://stackoverflow.com/questions/46227697/should-jpa-entities-and-ddd-entities-be-the-same-classes
+> 绑定的好处：不用专门定义JPA Entity类，也不需要Java bean mapping；绑定的坏处：会将业务数据、业务逻辑、表实体都放在同一个类中，持久化的注解会污染领域对象类。
+> 分离的好处：将表实体放在专门的JPA Entity类中，领域对象类只需要关注业务数据和业务逻辑；分离的坏处：需要专门定义对应的JPA Entity类，并且需要作Java Bean Mapping。
+> 个人建议分离，以获得更好的代码可读性。
+
+#### 聚合标识符
+
+以BookingId类为例：
+
+```java
+package com.practicalddd.cargotracker.bookingms.domain.model.aggregates;
+import javax.persistence.*;
+import java.io.Serializable;
+/**
+* Business Key Identifier for the Cargo Aggregate
+*/
+@Embeddable
+public class BookingId implements Serializable {
+    @Column(name="booking_id")
+    private String bookingId;
+    public BookingId(){}
+    public BookingId(String bookingId){this.bookingId = bookingId;}
+    public String getBookingId(){return this.bookingId;}
+}
+```
+
+> 示例代码中将BookingId类和直接和JPA Entity注解绑定起来。关于“绑定或分离”的争议参见上面。
+> 另外是否有必要定义一个专门的聚合标识符类，取决于聚合标识符是否会参加业务逻辑判断，如果有，则有必要定一个专门的类。
+
+
 
 ## References
 - https://github.com/Apress/practical-ddd-in-enterprise-java/tree/master/Chapter5
