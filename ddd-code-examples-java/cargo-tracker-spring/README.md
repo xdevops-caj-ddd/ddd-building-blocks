@@ -425,7 +425,20 @@ Cargo聚合的命令处理程序类图：
 查询负责向外提供查询上下文中聚合的状态。
 
 查询处理程序是聚合中的业务方法。
-在业务方法中
+但是实际编码中，一般是查询应用服务直接调用对应的数据库存储库的方法来查询，因为再通过聚合的查询处理程序中转一道，好像不是很需要。
+
+Booking上下文的根据BookingId查找Cargo的控制流：
+```bash
+# REST API -> 查询应用服务 -> 数据库存储库
+CargoBookingController.findByBookingId() -> CargoBookingQueryService.find() -> CargoRepository.findByBookingId()
+```
+
+
+另外的例子：
+以列表导出为例，聚合不关心导出的文件格式，而是在查询应用服务中需要关心。
+
+
+
 
 ## References
 - https://github.com/Apress/practical-ddd-in-enterprise-java/tree/master/Chapter5
