@@ -155,6 +155,8 @@ application # 应用层 / 应用服务
         └── CargoBookingQueryService.java
 ```
 
+在Spring Boot应用中，命令应用服务和查询应用服务对应Spring Boot的`@Service`注解。
+
 ### 领域层
 
 领域层主要包括：
@@ -220,13 +222,13 @@ infrastructure # 基础设施层 / 出站适配器
 - 应用程序入口：`BookingmsApplication.java`
 - 提供的命令（改变状态）的接口：
   ```bash
-  # REST API -> 命令应用服务 -> 数据库存储库
-  CargoBookingController -> CargoBookingCommandService -> CargoRepository
+  # REST API -> 命令应用服务 -> 聚合的命令处理程序 -> 数据库存储库操作
+  CargoBookingController -> CargoBookingCommandService -> Cargo -> CargoRepository
   ```
 - 提供的查询（获取状态）的接口：
   ```bash
-  # REST API -> 查询应用服务 -> 数据库存储库
-  CargoBookingController -> CargoBookingQueryService -> CargoRepository
+  # REST API -> 查询应用服务 -> 聚合的查询处理程序 -> 数据库存储库操作
+  CargoBookingController -> CargoBookingQueryService -> Cargo -> CargoRepository
   ```
 - 事件订阅与处理流程：
   TBC
@@ -235,7 +237,8 @@ infrastructure # 基础设施层 / 出站适配器
   CargoBookingController -> CargoBookingCommandService -> TBC
   ```
 
-  > TBC 控制流应该有对应的UML时序图
+Booking上下文“预定货物”的时序图：
+![book-cargo-sequence](../../ddd-assets/img/book-cargo-sequence.jpeg)
 
 ## 领域模型实现
 
@@ -415,6 +418,14 @@ public class BookCargoCommand {
 
 Cargo聚合的命令处理程序类图：
 ![cargo_cmd_handlers](../../ddd-assets/img/cargo_cmd_handlers.jpeg)
+
+
+#### 查询
+
+查询负责向外提供查询上下文中聚合的状态。
+
+查询处理程序是聚合中的业务方法。
+在业务方法中
 
 ## References
 - https://github.com/Apress/practical-ddd-in-enterprise-java/tree/master/Chapter5
