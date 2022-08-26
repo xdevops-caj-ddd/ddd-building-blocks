@@ -292,6 +292,71 @@ public class BookingId implements Serializable {
 > 示例代码中将BookingId类和直接和JPA Entity注解绑定起来。关于“绑定或分离”的争议参见上面。
 > 另外是否有必要定义一个专门的聚合标识符类，取决于聚合标识符是否会参加业务逻辑判断，如果有，则有必要定一个专门的类。
 
+#### 领域丰富度
+
+聚合类应该包括：
+- 业务属性
+- 业务方法
+
+反模式：
+- 贫血模型，领域对象类蜕变成POJO，只有业务属性，没有业务方法
+- 使用技术术语，而不是业务术语
+
+在聚合类中应该使用**业务术语**，而不是技术术语来表达。
+
+Cargo聚合的领域模型如下：
+![cargo_aggregate_model](../../ddd-assets/img/cargo_aggregate_model.jpeg)
+
+上述领域模型中，只画出了业务属性，没有画出业务方法。
+
+Cargo聚合中的业务概念：
+- `Origin Locaiton` - 货物的源地址
+- `Booking Amount` - 货物的订舱金额
+- `Routing Specification` - 路线规格（源地址、目的地、到达目的地截止日期）
+- `Itinerary` - 根据路线规格分配的货物行程
+  - `Leg` - 行程由一个或多个航段组成
+- `Delivery Progress` - 货物的交付进度
+  - `Routing Status` - 路线状态
+  - `Transport Status` - 运输状态
+  - `Current Voyage of the cargo` - 当前航程
+  - `Last Known Location of the cargo` - 获取的最后已知位置
+  - `Next Expected Activity` - 下一个预期活动
+  - `The Last Activity that occurred on the cargo` - 货物上发生的最后活动
+
+Cargo聚合类如下：
+```java
+package com.practicalddd.cargotracker.bookingms.domain.model.aggregates;
+import javax.persistence.*;
+import com.practicalddd.cargotracker.bookingms.domain.model.entities.*;
+import com.practicalddd.cargotracker.bookingms.domain.model.valueobjects.*;
+@Entity
+public class Cargo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Embedded
+    private BookingId bookingId; // Aggregate Identifier
+    @Embedded
+    private BookingAmount bookingAmount; //Booking Amount
+    @Embedded
+    private Location origin; //Origin Location of the Cargo
+    @Embedded
+    private RouteSpecification routeSpecification; //Route Specification of
+    the Cargo
+    @Embedded
+    private CargoItinerary itinerary; //Itinerary Assigned to the Cargo
+    @Embedded
+    private Delivery delivery; // Checks the delivery progress of the cargo
+    against the actual Route Specification and Itinerary
+}
+```
+
+可以看到Cargo聚合类，就是对Cargo聚合领域模型（UML类图）的实现。
+
+聚合与其依赖类的生命周期：
+聚合的依赖类被建模为实体对象或值对象。
+- 限界上下⽂中的**实体对象**具有⾃⼰的 **⾝份**，但始终存在于根聚合中，也就是说，它们**不能独⽴存在**，并且在聚合的整个⽣命周期中它们永远**不会改变**。
+- 另⼀⽅⾯，**值对象**没有⾃⼰的⾝份，并且可以在聚合的任何实例中轻松**替换**。
 
 
 ## References
