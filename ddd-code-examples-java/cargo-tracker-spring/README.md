@@ -235,6 +235,8 @@ infrastructure # 基础设施层 / 出站适配器
   CargoBookingController -> CargoBookingCommandService -> TBC
   ```
 
+  > TBC 控制流应该有对应的UML时序图
+
 ## 领域模型实现
 
 领域模型包括：
