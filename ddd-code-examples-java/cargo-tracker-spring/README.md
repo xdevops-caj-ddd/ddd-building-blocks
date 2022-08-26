@@ -356,8 +356,63 @@ public class Cargo {
 聚合与其依赖类的生命周期：
 聚合的依赖类被建模为实体对象或值对象。
 - 限界上下⽂中的**实体对象**具有⾃⼰的 **⾝份**，但始终存在于根聚合中，也就是说，它们**不能独⽴存在**，并且在聚合的整个⽣命周期中它们永远**不会改变**。
-- 另⼀⽅⾯，**值对象**没有⾃⼰的⾝份，并且可以在聚合的任何实例中轻松**替换**。
+- **值对象**没有⾃⼰的⾝份，并且可以在聚合的任何实例中轻松**替换**。
 
+
+### 领域模型操作
+
+领域模型操作包括：
+- 内部操作：
+    - 命令（改变状态）
+    - 查询（获取状态）
+- 外部操作
+    - 事件（传播状态）
+
+
+#### 命令
+
+命令用来改变有界上下文中聚合的状态。
+
+实现命令的步骤：
+- 识别和实现命令 （Command）
+- 识别和实现命令处理程序（Command Handlers）
+
+命令的识别围绕着识别影响聚合状态的操作。
+以Booking上下文为例，有以下操作会改变聚合的状态：
+- Book a Cargo 预定货物
+- Route a Cargo  运送货物
+
+命令用普通的POJO类实现。
+以BookCargoCommand为例：
+```java
+package com.practicalddd.cargotracker.bookingms.domain.model.commands;
+
+import java.util.Date;
+
+/**
+ * Book Cargo Command class
+ */
+public class BookCargoCommand {
+
+    private String bookingId;
+    private int bookingAmount;
+    private String originLocation;
+    private String destLocation;
+    private Date destArrivalDeadline;
+}
+```
+
+每个命令都对应一个命令处理程序。命令处理程序的目的是处理输入的命令，并设置聚合的状态。
+命令处理程序是在领域模型中修改聚合状态的**唯一地方**。
+命令处理程序通常对应聚合类的业务方法。
+在Cargo聚合中：
+- Book a Cargo命令对应的命令处理程序是`Cargo(BookCargoCommand bookCargoCommand)`构造方法
+- Route a Cargo命令对应的命令处理程序是`assignToRoute(RouteCargoCommand routeCargoCommand)`方法
+
+> 可以使用Lombok来简化这一类POJO的代码？
+
+Cargo聚合的命令处理程序类图：
+![cargo_cmd_handlers](../../ddd-assets/img/cargo_cmd_handlers.jpeg)
 
 ## References
 - https://github.com/Apress/practical-ddd-in-enterprise-java/tree/master/Chapter5
