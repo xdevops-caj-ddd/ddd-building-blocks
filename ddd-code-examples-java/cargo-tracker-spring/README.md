@@ -72,6 +72,7 @@ Implement **Distributed Transactions using event choreography** with a custom im
 
 以Booking上下文为例，包结构如下：
 ```bash
+bookingms # Booking上下文
 ├── BookingmsApplication.java # Spring Boot应用程序入口
 ├── application # 应用层
 ├── domain # 领域层
@@ -437,6 +438,91 @@ CargoBookingController.findByBookingId() -> CargoBookingQueryService.find() -> C
 另外的例子：
 以列表导出为例，聚合不关心导出的文件格式，而是在查询应用服务中需要关心。
 
+
+### 领域事件
+
+事件驱动架构实现的四个阶段：
+- 事件发布者：
+  - 注册需要从限界上下文中引发的领域事件 （在聚合的命令处理程序中）
+  - 引发需要从限界上下文发布的领域事件 （在应用层的出站服务中）
+  - 发布从限界上下文引发的事件 （在应用层的出站服务中）
+- 事件接收者
+  - 订阅已从其他限界上下文发布的事件 （在接口层的事件处理程序中）
+
+#### 事件注册
+
+使用Spring Data的`AbstractAggregateRoot<T>.registerEvent() `注册事件 ?
+
+在Cargo聚合的命令处理程序业务方法的最后注册相应事件：
+```java
+public Cargo(BookCargoCommand bookCargoCommand){
+    //other codes
+
+    //Add this domain event which needs to be fired when the new cargo is saved
+    addDomainEvent(new
+            CargoBookedEvent(
+                    new CargoBookedEventData(bookingId.getBookingId())));
+}
+
+public void assignToRoute(RouteCargoCommand routeCargoCommand) {
+    //other codes
+
+    //Add this domain event which needs to be fired when the new cargo is saved
+    addDomainEvent(new
+            CargoRoutedEvent(
+            new CargoRoutedEventData(bookingId.getBookingId())));
+}
+
+public void addDomainEvent(Object event){
+    registerEvent(event);
+}
+```
+
+对应的领域事件类：
+- CargoBookedEvent
+- CargoBookedEventData
+- CargoRoutedEvent
+- CargoRoutedEventData
+
+
+这些Event和EventData类都放在根目录下的`shareddomain/events`目录下。
+
+```bash
+shareddomain # 共享领域模型？说好的shared nothing架构呢？
+└── events
+    ├── CargoBookedEvent.java
+    ├── CargoBookedEventData.java
+    ├── CargoRoutedEvent.java
+    └── CargoRoutedEventData.java
+```
+
+## 领域模型服务
+
+领域模型服务的三种类型：
+- 入站服务 （外部消费者的入口）
+- 出站服务 （与外部消费者交互的入口）
+- 应用服务 （充当领域模型、入站服务和出站服务的门面层）
+
+领域模型服务示意图：
+![domain-model-services](../../ddd-assets/img/domain-model-services.jpeg)
+
+### 入站服务
+
+入站服务的两种类型：
+- 基于REST的API层（使用Spring Boot的@RestController）
+- 事件处理层（基于Spring Cloud Stream）
+
+#### REST API
+
+REST API实现类图：
+![rest-api-class](../../ddd-assets/img/rest-api-class.jpeg)
+
+说明：
+- Controller类：
+- API Resource类：
+- Java Bean转换器类：
+- Command类：
+- 命令应用服务类：
 
 
 
